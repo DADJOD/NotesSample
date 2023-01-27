@@ -13,7 +13,7 @@ class DbOpenHelper(mContext: Context) :
         db.execSQL(DB_CREATE)
         // TODO DELETE AFTER DEBUGGING
         val values = ContentValues(1)
-        for (i in 0..50) {
+        for (i in 0..5) {
             values.put(COLUMN_NOTE, "NOTE # $i")
             db.insert(DB_TABLE, null, values)
         }

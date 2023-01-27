@@ -26,7 +26,6 @@
         android:autofillHints="Write text"
         android:inputType="text"
         android:minHeight="48dp"
-        android:text="@string/hello_world"
         tools:ignore="LabelFor" />
 
     <ListView

@@ -1,5 +1,6 @@
 package com.example.notessample
 
+import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.View
@@ -7,7 +8,6 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.SimpleCursorAdapter
 import androidx.appcompat.app.AppCompatActivity
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         mInputField = findViewById(R.id.inputField)
         mNotesList  = findViewById(R.id.notesList)
-        mAdapter    = SimpleCursorAdapter(
+        mAdapter = SimpleCursorAdapter(
             this, R.layout.note,
             null, from, to, 0)
         mNotesList.adapter = mAdapter //!!
@@ -38,50 +38,32 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mDb = mHelper.writableDatabase
+        showNotes()
+    }
+
+    private fun showNotes() {
+        mDb = mHelper.writableDatabase //открывашка DataBase
         val c = mDb.query(
             DbOpenHelper.DB_TABLE, fields, null, null,
-            null, null, order)
-
+            null, null, order
+        )
         mAdapter.swapCursor(c)
     }
 
-    fun onOkButtonClick(view: View) {}
+    override fun onStop() {
+        super.onStop()
+        mDb.close()
+    }
 
-//    private val FIELDS: Array<String?>? = arrayOf<String>("_id", DbOpenHelper.COLUMN_NOTE)
-//    private val FROM = arrayOf(DbOpenHelper.COLUMN_NOTE)
-//    private val TO = intArrayOf(R.id.noteView)
-//    private val ORDER = "_id DESC"
-//
-//    var mInputField: EditText? = null
-//    var mNotesList: ListView? = null
-//
-//    var mHelper = DbOpenHelper(this)
-//    var mDb: SQLiteDatabase? = null
-//
-//    var mAdapter: SimpleCursorAdapter? = null
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
-//        mInputField = findViewById<View>(R.id.inputField) as EditText
-//        mNotesList = findViewById<View>(R.id.notesList) as ListView
-//        mAdapter = SimpleCursorAdapter(
-//            this, R.layout.note,
-//            n ull, FROM, TO, 0
-//        )
-//        mNotesList!!.adapter = mAdapter
-//    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//        mDb = mHelper.writableDatabase
-//        val c: Cursor = mDb.query(
-//            DbOpenHelper.DB_TABLE, FIELDS,
-//            null, null, null, null, ORDER
-//        )
-//        mAdapter!!.swapCursor(c)
-//    }
-//
-//    fun onOkButtonClick(view: View?) {}
+    fun onOkButtonClick(view: View) {
+        val newNote = mInputField.text.toString().trim()
+        if (newNote.isNotEmpty()) {
+            val values = ContentValues(1)
+            values.put(DbOpenHelper.COLUMN_NOTE, newNote)
+            mDb = mHelper.writableDatabase //открывашка DataBase
+            mDb.insert(DbOpenHelper.DB_TABLE, null, values)
+            showNotes()
+        }
+        mInputField.text = null
+    }
 }
