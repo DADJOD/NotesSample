@@ -3,4 +3,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="ok">OK</string>
     <string name="type_note_here">Type note here...</string>
+    <string name="edit">edit</string>
+    <string name="delete">delete</string>
 </resources>
